@@ -2,6 +2,7 @@ import React, { FormHTMLAttributes } from 'react';
 
 import {
     Footer,
+    WarningContainer,
     WarningText,
     WarningIcon,
     SubmitButton
@@ -40,23 +41,25 @@ const Form: React.FC<FormProps> = ({ footerMessage, buttonText, children, ...pro
             {children}
 
             <Footer hasData={Boolean(footerMessage.message)}>
-                {
-                    footerMessage.message &&
-                    <WarningText>
-                        <WarningIcon src={footerIcon} alt='ícone de aviso importante' />
+                <WarningContainer>
+                    {
+                        footerMessage.message &&
+                        <WarningText>
+                            <WarningIcon src={footerIcon} alt='ícone de aviso importante' />
 
-                        {footerMessage.type === 'warning' && 'Atenção'}
-                        {footerMessage.type === 'error' && 'Erro'}
-                        {footerMessage.type === 'success' && 'Sucesso'}
-                        <br />
-                        {footerMessage.message}
-                    </WarningText>
-                }
+                            {footerMessage.type === 'warning' && 'Atenção'}
+                            {footerMessage.type === 'error' && 'Erro'}
+                            {footerMessage.type === 'success' && 'Sucesso'}
+                            <br />
+                            {footerMessage.message}
+                        </WarningText>
+                    }
+                </WarningContainer>
 
                 <SubmitButton type='submit'>{buttonText}</SubmitButton>
             </Footer>
         </form>
     );
-}
+};
 
 export default Form;

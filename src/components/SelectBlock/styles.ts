@@ -1,17 +1,10 @@
 import styled from 'styled-components';
-import {
-    Input as BootstrapInput
-} from 'reactstrap';
 
-interface ContainerProps {
-    closable?: boolean;
-}
-
-export const Container = styled.div<ContainerProps>`
+export const Container = styled.div`
     position: relative;
 
-    & + &,
-    & + #select-block {
+    & + &
+    & + #input-block {
         margin-top: 1rem;
     }
 
@@ -19,23 +12,18 @@ export const Container = styled.div<ContainerProps>`
         width: 0;
         height: 3px;
         content: "";
+        background-color: var(--color-primary-light);
         position: absolute;
         left: 0.96rem;
+        right: 0.96rem;
         bottom: 0;
-        background-color: var(--color-primary-light);
         transition: all 0.2s;
     }
 
     &:focus-within::after {
-        width: ${({ closable }) => closable ? 'calc(100% - 5.52rem)' : 'calc(100% - 1.92rem)'};
+        width: calc(100% - 1.92rem);
+        transition: all 0.2s;
     }
-`;
-
-export const InputWrapper = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.48rem;
 `;
 
 export const Label = styled.label`
@@ -43,16 +31,16 @@ export const Label = styled.label`
     color: var(--color-text-complement);
 `;
 
-export const Input = styled(BootstrapInput)`
+export const Select = styled.select`
     width: 100%;
     height: 3.36rem;
     border-radius: 0.48rem;
     padding: 0 0.96rem;
     border: 1px solid var(--color-line-in-primary);
     background: var(--color-input-background);
+    cursor: pointer;
 
-    &&:focus {
-        box-shadow: none;
+    &:focus {
         color: inherit;
         background: var(--color-input-background);
         border: 1px solid var(--color-line-in-primary);

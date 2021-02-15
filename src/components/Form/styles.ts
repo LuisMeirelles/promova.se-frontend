@@ -26,6 +26,13 @@ export const Footer = styled.footer<FooterProps>`
     }
 `;
 
+export const WarningContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+`;
+
 export const WarningText = styled.p`
     display: flex;
     align-items: center;

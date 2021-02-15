@@ -81,7 +81,7 @@ export const ButtonsContainer = styled.div`
     }
 `;
 
-export const Button = styled(Link)<ButtonProps>`
+export const Button = styled(Link) <ButtonProps>`
     width: 18rem;
     height: 3.24rem;
     border-radius:0.48rem;
@@ -92,7 +92,7 @@ export const Button = styled(Link)<ButtonProps>`
     color: var(--color-button-text);
     transition: all 0.2s;
 
-    background-color: ${({primary, secondary}) => (primary && 'var(--color-primary-lighter)') || (secondary && 'var(--color-secondary)')};
+    background-color: ${({ primary, secondary }) => (primary && 'var(--color-primary-lighter)') || (secondary && 'var(--color-secondary)')};
 
     & {
         text-decoration: none !important;
@@ -104,7 +104,7 @@ export const Button = styled(Link)<ButtonProps>`
 
     &:hover,
     &:focus {
-        background-color: ${({primary, secondary}) => (primary && 'var(--color-primary-light)') || (secondary && 'var(--color-secondary-dark)')};
+        background-color: ${({ primary, secondary }) => (primary && 'var(--color-primary-light)') || (secondary && 'var(--color-secondary-dark)')};
         color: var(--color-button-text);
     }
 
@@ -112,9 +112,4 @@ export const Button = styled(Link)<ButtonProps>`
         font-size: 1.44rem;
         height: 4.44rem;
     }
-`;
-
-export const ButtonIcon = styled.img`
-    width: 1.8rem;
-    margin-right: 1.08rem;
 `;
