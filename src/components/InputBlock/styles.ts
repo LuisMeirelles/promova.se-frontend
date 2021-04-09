@@ -11,15 +11,16 @@ export const Container = styled.div<ContainerProps>`
     position: relative;
 
     & + &,
-    & + #select-block {
+    #select-block + & {
         margin-top: 1rem;
     }
 
     &::after {
-        width: 0;
-        height: 3px;
         content: "";
         position: absolute;
+        width: 0;
+        height: 3px;
+        border-radius: 3px;
         left: 0.96rem;
         bottom: 0;
         background-color: var(--color-primary-light);

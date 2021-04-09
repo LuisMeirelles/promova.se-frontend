@@ -28,7 +28,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, description, children })
                     </Link>
                 </ReturnButton>
 
-                <Logo>Antares</Logo>
+                <Logo>Promova.se</Logo>
             </TopBarContainer>
 
             <HeaderContent>

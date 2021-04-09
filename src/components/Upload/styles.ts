@@ -36,7 +36,7 @@ export const FileInfo = styled.div`
 `;
 
 interface PreviewProps {
-    src: string;
+    src?: string;
 }
 
 export const Preview = styled.div<PreviewProps>`
@@ -63,14 +63,27 @@ const dragReject = css`
     border-color: var(--color-error);
 `;
 
+const hoverContainer = css`
+    border-width: 2px;
+
+    p {
+        padding: calc(1rem - 1px) 0;
+        font-weight: bold;
+    }
+`;
+
 export const DropContainer = styled.div<DropContainerProps>`
     border: 1px dashed var(--color-primary);
     border-radius: 0.25rem;
     cursor: pointer;
-    transition: height 0.5s;
 
-    ${({ isDragActive }) => isDragActive && dragActive};
-    ${({ isDragReject }) => isDragReject && dragReject};
+    ${({ isDragActive }) => isDragActive && [dragActive, hoverContainer]}
+    ${({ isDragReject }) => isDragReject && [dragReject, hoverContainer]}
+
+    &:hover,
+    &:focus {
+        ${() => hoverContainer}
+    }
 `;
 
 interface UploadMessageProps {
@@ -89,5 +102,4 @@ export const UploadMessage = styled.p<UploadMessageProps>`
     padding: 1rem 0;
     margin-bottom: 0;
     color: ${({ type }) => messageColors[type || 'default']};
-    font-weight: bold;
 `;

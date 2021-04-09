@@ -20,19 +20,19 @@ const Landing: React.FC = () => {
         <PageLanding>
             <PageLandingContent>
                 <LogoContainer>
-                    <Logo>Antares</Logo>
-                    <Description>Plataforma para interação com a banda Antares</Description>
+                    <Logo>Promova.se</Logo>
+                    <Description>Plataforma para promover sua banda ou encontrar bandas para tocar no seu estabelecimento.</Description>
                 </LogoContainer>
 
                 <HeroImage src={heroImage} />
 
                 <ButtonsContainer>
-                    <Button to='/login' primary>
+                    <Button to='/login' color='primary'>
                         <FaSignInAlt style={{ marginRight: '1rem' }} size={32} color='white' />
                         Fazer Login
                     </Button>
 
-                    <Button to='/signup' secondary>
+                    <Button to='/signup' color='secondary'>
                         <FaUserPlus style={{ marginRight: '1rem' }} size={32} color='white' />
                         Cadastrar
                     </Button>

@@ -3,8 +3,7 @@ import { Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 interface ButtonProps {
-    primary?: boolean;
-    secondary?: boolean;
+    color?: 'primary' | 'secondary';
 }
 
 export const PageLanding = styled.div`
@@ -81,6 +80,16 @@ export const ButtonsContainer = styled.div`
     }
 `;
 
+const colors = {
+    primary: 'var(--color-primary-lighter)',
+    secondary: 'var(--color-secondary)'
+};
+
+const focusColors = {
+    primary: 'var(--color-primary-light)',
+    secondary: 'var(--color-secondary-dark)'
+}
+
 export const Button = styled(Link) <ButtonProps>`
     width: 18rem;
     height: 3.24rem;
@@ -92,7 +101,7 @@ export const Button = styled(Link) <ButtonProps>`
     color: var(--color-button-text);
     transition: all 0.2s;
 
-    background-color: ${({ primary, secondary }) => (primary && 'var(--color-primary-lighter)') || (secondary && 'var(--color-secondary)')};
+    background-color: ${({ color }) => color ? colors[color] : 'white'};
 
     & {
         text-decoration: none !important;
@@ -104,7 +113,7 @@ export const Button = styled(Link) <ButtonProps>`
 
     &:hover,
     &:focus {
-        background-color: ${({ primary, secondary }) => (primary && 'var(--color-primary-light)') || (secondary && 'var(--color-secondary-dark)')};
+        background-color: ${({ color }) => color ? focusColors[color]: '#ccc'};
         color: var(--color-button-text);
     }
 

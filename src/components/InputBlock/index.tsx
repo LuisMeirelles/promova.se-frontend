@@ -1,5 +1,6 @@
 import React, {
-    InputHTMLAttributes
+    InputHTMLAttributes,
+    Fragment
 } from 'react';
 import { FormFeedback } from 'reactstrap';
 
@@ -35,15 +36,45 @@ const InputBlock: React.FC<InputBlockProps> = ({ label, id, valid, messagesOnVal
                     <CloseButton onClick={onClose} />
                 </InputWrapper>
             ) : (
-                <Input id={id} {...props} valid={valid} invalid={valid !== undefined && !valid} />
-            )}
+                    <Input id={id} {...props} valid={valid} invalid={valid !== undefined && !valid} />
+                )}
 
-            <FormFeedback styles={{wordWrap: 'break-word'}} valid tooltip={messagesOnValid !== undefined}>
-                {messagesOnValid?.map((message, idx, arr) => arr[idx + 1] ? <>{message}<br /></> : message)}
+            <FormFeedback valid tooltip={messagesOnValid !== undefined}>
+                {messagesOnValid?.map((message, idx, arr) => {
+                    if (arr[idx + 1]) {
+                        return (
+                            <Fragment key={idx}>
+                                {message}
+                                <br />
+                            </Fragment>
+                        );
+                    } else {
+                        return (
+                            <Fragment key={idx}>
+                                {message}
+                            </Fragment>
+                        );
+                    }
+                })}
             </FormFeedback>
 
-            <FormFeedback styles={{wordWrap: 'break-word'}} invalid tooltip={messagesOnInvalid !== undefined}>
-                {messagesOnInvalid?.map((message, idx, arr) => arr[idx + 1] ? <>{message}<br /></> : message)}
+            <FormFeedback tooltip={messagesOnInvalid !== undefined}>
+                {messagesOnInvalid?.map((message, idx, arr) => {
+                    if (arr[idx + 1]) {
+                        return (
+                            <Fragment key={idx}>
+                                {message}
+                                <br />
+                            </Fragment>
+                        );
+                    } else {
+                        return (
+                            <Fragment key={idx}>
+                                {message}
+                            </Fragment>
+                        );
+                    }
+                })}
             </FormFeedback>
         </Container>
     );

@@ -1,12 +1,12 @@
 import React, {
     useState
 } from 'react';
-
-import Dropzone from 'react-dropzone';
+import Dropzone, {
+    DropEvent
+} from 'react-dropzone';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import {
     FaLink,
-    FaCheckCircle,
     FaExclamationCircle,
     FaTimes
 } from 'react-icons/fa';
@@ -20,26 +20,25 @@ import {
     UploadMessage
 } from './styles';
 
-import api from '../../services/api';
+export interface ImageData {
+    file: File;
+    readableSize: string;
+    previewURL: string;
+    progress: number;
+    error: boolean;
+}
 
 interface UploadProps {
     defaultMessage?: string;
     dragActiveMessage?: string;
     dragRejectMessage?: string;
+    onDropAccepted: (files: ImageData) => void;
+    image?: ImageData;
 }
 
-const Upload: React.FC<UploadProps> = ({ defaultMessage, dragActiveMessage, dragRejectMessage }) => {
-    interface IImageData {
-        file: File;
-        readableSize: string;
-        previewURL: string;
-        progress: number;
-        uploaded: boolean;
-        error: boolean;
-        url: string | null;
-    }
+const Upload: React.FC<UploadProps> = ({ defaultMessage, dragActiveMessage, dragRejectMessage, onDropAccepted, image }) => {
 
-    const [imageData, setImageData] = useState<IImageData>();
+    const [imageData, setImageData] = useState<ImageData>();
     const [renderCloseButton, setRenderCloseButton] = useState<boolean>(false);
 
     const renderDragMessage = (isDragActive: boolean, isDragReject: boolean) => {
@@ -52,51 +51,21 @@ const Upload: React.FC<UploadProps> = ({ defaultMessage, dragActiveMessage, drag
         return <UploadMessage type='success'>{dragActiveMessage}</UploadMessage>;
     };
 
-    const handleDrop = async (files: File[]) => {
+    const handleDrop = (files: File[], _: DropEvent) => {
         const file = files[0];
 
         const newImageData = {
             file,
             readableSize: filesize(file.size),
             previewURL: URL.createObjectURL(file),
-            progress: 0,
+            progress: image?.progress || 0,
             uploaded: false,
-            error: false,
-            url: null
+            error: false
         };
-
-        const data = new FormData();
 
         setImageData(newImageData);
 
-        data.append('file', newImageData.file);
-
-        try {
-            const response = await api.post('/upload', data, {
-                onUploadProgress: (evt: ProgressEvent) => {
-                    const progress = Math.round((evt.loaded * 100) / evt.total);
-                    setImageData({
-                        ...newImageData,
-                        progress
-                    });
-                }
-            });
-
-            setImageData({
-                ...newImageData,
-                uploaded: true,
-                url: response.data.url
-            });
-
-            console.log(response);
-        } catch (err) {
-            setImageData({
-                ...newImageData,
-                error: true
-            });
-
-            console.error(err);
-        }
+        onDropAccepted(newImageData);
     };
 
     const deleteImage = () => {
@@ -110,35 +79,30 @@ const Upload: React.FC<UploadProps> = ({ defaultMessage, dragActiveMessage, drag
                 onMouseLeave={() => setRenderCloseButton(false)}
             >
                 <FileInfo>
-                    <Preview src={imageData.previewURL} />
+                    <Preview src={image?.previewURL} />
 
                     <div>
                         <strong>
-                            {imageData.file.name}
+                            {image?.file.name}
+                            {renderCloseButton && (
+                                <button
+                                    onClick={deleteImage}
+                                >
+                                    <FaTimes
+                                        size={16}
+                                        color='var(--color-error)'
+                                    />
+                                </button>
+                            )}
                         </strong>
-                        <span>{imageData.readableSize}</span>
+                        <span>{image?.readableSize}</span>
                     </div>
                 </FileInfo>
 
                 <div>
-                    {!imageData.uploaded && !imageData.error && (
-                        <CircularProgressbar
-                            styles={{
-                                root: {
-                                    width: 24
-                                },
-                                path: {
-                                    stroke: 'var(--color-primary)'
-                                }
-                            }}
-                            strokeWidth={10}
-                            value={imageData.progress}
-                        />
-                    )}
-
-                    {imageData.url && (
+                    {image?.previewURL && (
                         <a
-                            href={imageData.file.name}
+                            href={image?.previewURL}
                             target='_blank'
                             rel='noopener noreferrer'
                         >
@@ -150,42 +114,27 @@ const Upload: React.FC<UploadProps> = ({ defaultMessage, dragActiveMessage, drag
                         </a>
                     )}
 
-                    {(imageData.uploaded) && (
-
-                        renderCloseButton
-                            ? (
-                                <button
-                                    onClick={deleteImage}
-                                >
-                                    <FaTimes
-                                        size={32}
-                                        color='var(--color-error)'
-                                    />
-                                </button>
-                            ) : (
-                                <FaCheckCircle
-                                    size={32}
-                                    color='var(--color-secondary)'
-                                />
-                            )
+                    {!image?.error && (
+                        <CircularProgressbar
+                            styles={{
+                                root: {
+                                    width: 36
+                                },
+                                path: {
+                                    stroke: 'var(--color-primary)'
+                                }
+                            }}
+                            strokeWidth={10}
+                            value={image?.progress || 0}
+                        />
                     )}
-                    {imageData.error && (
-                        renderCloseButton
-                            ? (
-                                <button
-                                    onClick={deleteImage}
-                                >
-                                    <FaTimes
-                                        size={32}
-                                        color='var(--color-error)'
-                                    />
-                                </button>
-                            ) : (
-                                <FaExclamationCircle
-                                    size={32}
-                                    color='var(--color-error)'
-                                />
-                            )
+
+                    {image?.error && (
+                        <FaExclamationCircle
+                            style={{ marginLeft: '0.5rem' }}
+                            size={32}
+                            color='var(--color-error)'
+                        />
                     )}
                 </div>
             </Container>

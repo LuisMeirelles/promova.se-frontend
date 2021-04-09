@@ -3,8 +3,8 @@ import styled from 'styled-components';
 export const Container = styled.div`
     position: relative;
 
-    & + &
-    & + #input-block {
+    & + &,
+    #input-block + & {
         margin-top: 1rem;
     }
 

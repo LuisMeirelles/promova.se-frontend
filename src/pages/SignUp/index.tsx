@@ -1,24 +1,35 @@
 import React, {
     useState,
-    FormEvent
+    FormEvent,
+    useEffect
 } from 'react';
 
 import { useHistory } from 'react-router-dom';
 
 import {
-    AddButtonContainer,
     Container,
     Main,
-    AddButton,
-    UploadContainer
+    UploadContainer,
+    RadioContainer,
+    Label,
+    RadioWrapper
 } from './styles';
 
 import PageHeader from '../../components/PageHeader';
 import Form from '../../components/Form';
 import Fieldset from '../../components/Fieldset';
 import InputBlock from '../../components/InputBlock';
-import SelectBlock from '../../components/SelectBlock';
-import Upload from '../../components/Upload';
+import Upload, {
+    ImageData
+} from '../../components/Upload';
+
+import BandRegister, {
+    BandData
+} from '../../components/BandRegister';
+
+import ContractorRegister, {
+    ContractorData
+} from '../../components/ContractorRegister';
 
 import api from '../../services/api';
 
@@ -31,14 +42,7 @@ interface SignUpData {
     email: string;
     username: string;
     password: string;
-}
-
-interface BandData {
-    name: string;
-    profilePhoto?: string;
     bio?: string;
-    members: string[];
-    musicalStyles: string[];
     contact: {
         [otherContact: string]: string | undefined;
         phoneNumber?: string;
@@ -49,42 +53,88 @@ interface BandData {
         instagram?: string;
         youtube?: string;
     };
+    bandData?: BandData;
+    contractorData?: ContractorData;
 }
 
 const SignUp: React.FC = () => {
     const [signUpData, setSignUpData] = useState<SignUpData>({
         email: '',
         username: '',
-        password: ''
-    });
-
-    const [bandData, setBandData] = useState<BandData>({
-        name: '',
-        members: [],
-        musicalStyles: [],
+        password: '',
         contact: {}
     });
 
-    const [confirmedPassword, setConfirmedPassword] = useState<string>('');
+    const [profilePicture, setProfilePicture] = useState<ImageData>({
+        file: new File([''], ''),
+        readableSize: '',
+        error: false,
+        previewURL: '',
+        progress: 0
+    });
+
+    const [passwordConfirmed, setPasswordConfirmed] = useState<string>('');
 
     const [responseMessage, setResponseMessage] = useState<ResponseMessage>({
         type: '',
         message: ''
     });
 
-    const [formation, setFormation] = useState<string>('');
+    const [bandRegister, isBandRegister] = useState<boolean>(true);
+
+    const [validEmail, isValidEmail] = useState<boolean>(false);
+    const [validUsername, isValidUsername] = useState<boolean>(false);
+    const [validPassword, isValidPassword] = useState<boolean>(false);
+
+    const [validData, isValidData] = useState<boolean>(false);
+
+    const [bandData, setBandData] = useState<BandData>({
+        name: '',
+        formation: '',
+        members: [],
+        musicalStyles: []
+    });
+
+    const [contractorData, setContractorData] = useState<ContractorData>({
+        companyName: ''
+    });
 
     const history = useHistory();
+
+    useEffect(() => {
+        if (validEmail && validUsername && validPassword) {
+            isValidData(true);
+        } else {
+            isValidData(false);
+        }
+    }, [
+        validEmail,
+        validUsername,
+        validPassword
+    ]);
 
     const handleSignUp = async (evt: FormEvent) => {
         evt.preventDefault();
 
-        if (signUpData.password === confirmedPassword) {
+        if (validData) {
+            const data = new FormData();
+
+            data.append('email', signUpData.email);
+            data.append('username', signUpData.username);
+            data.append('password', signUpData.password);
+            data.append('profile_picture', profilePicture.file);
+
             try {
-                await api.post(
-                    '/users',
-                    signUpData
-                );
+                const user = await api.post('/users', data, {
+                    onUploadProgress: (evt: ProgressEvent) => {
+                        const progress = Math.round((evt.loaded * 100) / evt.total);
+
+                        setProfilePicture({
+                            ...profilePicture,
+                            progress
+                        });
+                    }
+                });
 
                 history.push('/');
             } catch (error) {
@@ -92,8 +142,10 @@ const SignUp: React.FC = () => {
                     case 'unexpected error while creating new user':
                         setResponseMessage({
                             type: 'error',
-                            message: `Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte provendo as seguintes informações: ${error.response.data.message.error}`
+                            message: `Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte provendo as seguintes informações: ${error.response.data.message}`
                         });
+
+                        console.log(error.response);
 
                         break;
 
@@ -114,24 +166,34 @@ const SignUp: React.FC = () => {
                         break;
                 }
             }
-        } else {
+        } else if (!validEmail) {
             setResponseMessage({
                 type: 'warning',
-                message: 'As senhas não coincidem'
+                message: 'O email é inválido'
+            });
+        } else if (!validUsername) {
+            setResponseMessage({
+                type: 'warning',
+                message: 'O nome de usuário é inválido'
+            });
+        } else if (!validPassword) {
+            setResponseMessage({
+                type: 'warning',
+                message: 'A senha é inválida'
             });
         }
-
-        console.log({ bandData, signUpData });
     };
 
     const emailIsValid = () => {
         const { email } = signUpData;
 
         if (/^[\w.-]+@\w+(\.\w+)+$/.test(email)) {
+            !validEmail && isValidEmail(true);
             return true;
         } else if (email === '') {
             return undefined;
         } else {
+            validEmail && isValidEmail(false);
             return false;
         }
     };
@@ -184,10 +246,12 @@ const SignUp: React.FC = () => {
         const { username } = signUpData;
 
         if (/[\s/]/.test(username)) {
+            validUsername && isValidUsername(false);
             return false;
         } else if (username === '') {
             return undefined;
         } else {
+            !validUsername && isValidUsername(true);
             return true;
         }
     };
@@ -213,10 +277,15 @@ const SignUp: React.FC = () => {
         const regex = /(?=.*[<>,.;:/?°~^[\]{}ºª´`'"!@#$%&*()\-_=+|\\])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}/;
 
         if (regex.test(password)) {
+            if (!validPassword && passwordConfirmed === password) {
+                isValidPassword(true);
+            }
+
             return true;
         } else if (password === '') {
             return undefined;
         } else {
+            validPassword && isValidPassword(false);
             return false;
         }
     };
@@ -253,9 +322,9 @@ const SignUp: React.FC = () => {
 
         const regex = /(?=.*[<>,.;:/?°~^[\]{}ºª´`'"!@#$%&*()\-_=+|\\])(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}/;
 
-        if (confirmedPassword === password && regex.test(confirmedPassword)) {
+        if (passwordConfirmed === password && regex.test(passwordConfirmed)) {
             return true;
-        } else if (confirmedPassword === '') {
+        } else if (passwordConfirmed === '') {
             return undefined;
         } else {
             return false;
@@ -266,45 +335,38 @@ const SignUp: React.FC = () => {
         const { password } = signUpData;
         const messages = [];
 
-        if (confirmedPassword.length < 8) {
+        if (passwordConfirmed.length < 8) {
             messages.push('A senha deve ter pelo menos oito caracteres');
         }
 
-        if (!/[a-z]+/.test(confirmedPassword)) {
+        if (!/[a-z]+/.test(passwordConfirmed)) {
             messages.push('A senha deve conter pelo menos uma letra minúscula');
         }
 
-        if (!/[A-Z]+/.test(confirmedPassword)) {
+        if (!/[A-Z]+/.test(passwordConfirmed)) {
             messages.push('A senha deve conter pelo menos uma letra maiúscula');
         }
 
-        if (!/[0-9]+/.test(confirmedPassword)) {
+        if (!/[0-9]+/.test(passwordConfirmed)) {
             messages.push('A senha deve conter pelo menos um número');
         }
 
-        if (!/[<>,.;:/?°~^[\]{}ºª´`'"!@#$%&*()\-_=+|\\]+/.test(confirmedPassword)) {
+        if (!/[<>,.;:/?°~^[\]{}ºª´`'"!@#$%&*()\-_=+|\\]+/.test(passwordConfirmed)) {
             messages.push('A senha deve conter pelo menos um dos seguintes caracteres especiais: <>,.;:/?°~^[]{}ºª´`\'"!@#$%&*()-_=+|\\');
         }
 
-        if (confirmedPassword !== password) {
+        if (passwordConfirmed !== password) {
             messages.push('As senhas não coincidem');
         }
 
         return messages;
     };
 
-    const addMember = () => {
-        setBandData({
-            ...bandData,
-            members: [...bandData.members, '']
-        });
-    };
-
     return (
         <Container>
             <PageHeader
-                title='Nós da banda Antares ficamos agradecidos por você querer fazer parte das nossas decisões.'
-                description='Para participar das decisões da banda é só realizar o cadastro preenchendo os dados do formulário abaixo.'
+                title='Cadastre sua banda ou estabelecimento aqui.'
+                description='Para realizar o cadastro da sua banda ou estabelecimento na nossa plataforma basta preencher os dados do formulário abaixo.'
             />
 
             <Main>
@@ -353,116 +415,111 @@ const SignUp: React.FC = () => {
                         <InputBlock
                             label='Confirmar Senha'
                             type='password'
-                            value={confirmedPassword}
-                            onChange={evt => setConfirmedPassword(evt.target.value)}
+                            value={passwordConfirmed}
+                            onChange={evt => setPasswordConfirmed(evt.target.value)}
                             valid={confirmedPasswordIsValid()}
                             messagesOnInvalid={generateInvalidConfirmedPasswordText()}
                         />
-                    </Fieldset>
-
-                    <Fieldset title='Dados da Banda'>
-                        <InputBlock
-                            label='Nome da Banda'
-                            value={bandData.name}
-                            onChange={evt => setBandData({
-                                ...bandData,
-                                name: evt.target.value
-                            })}
-                        />
-
-                        <SelectBlock
-                            label={`Informe a formação da ${bandData.name || 'banda'}`}
-                            options={[
-                                { value: 'solo', text: 'Solo' },
-                                { value: 'dupla', text: 'Dupla' },
-                                { value: 'banda', text: 'Banda' }
-                            ]}
-                            value={formation}
-                            onChange={evt => {
-                                setFormation(evt.target.value);
-
-                                switch (evt.target.value) {
-                                    case '':
-                                        setBandData({
-                                            ...bandData,
-                                            members: []
-                                        });
-
-                                        break;
-
-                                    case 'solo':
-                                        setBandData({
-                                            ...bandData,
-                                            members: [
-                                                ...bandData.members.slice(0, 1)
-                                            ]
-                                        });
-
-                                        break;
-
-                                    case 'dupla':
-                                        setBandData({
-                                            ...bandData,
-                                            members: [
-                                                ...bandData.members.slice(0, 2)
-                                            ]
-                                        });
-
-                                        break;
-                                }
-                            }}
-                        />
-
-                        {((formation === 'solo' && bandData.members.length < 1) ||
-                            (formation === 'dupla' && bandData.members.length < 2) ||
-                            (formation === 'banda' && bandData.members.length < 3)) && addMember()}
-
-                        {bandData.members.map((_, idx) => (formation !== '') && (
-                            <>
-                                <InputBlock
-                                    label='Nome do Integrante'
-                                    value={bandData.members[idx]}
-                                    onChange={evt => setBandData({
-                                        ...bandData,
-                                        members: [
-                                            ...bandData.members.slice(0, idx),
-                                            evt.target.value,
-                                            ...bandData.members.slice(idx + 1)
-                                        ]
-                                    })}
-                                    closable={(formation === 'banda' && bandData.members.length > 3)}
-                                    onClose={() => setBandData({
-                                        ...bandData,
-                                        members: [
-                                            ...bandData.members.slice(0, idx),
-                                            ...bandData.members.slice(idx + 1)
-                                        ]
-                                    })}
-                                />
-                            </>
-                        ))}
-
-                        {(Boolean(formation === 'banda') ||
-                            Boolean(formation === 'dupla' && bandData.members.length === 1)) && (
-                                <AddButtonContainer>
-                                    <AddButton
-                                        type='button'
-                                        onClick={addMember}
-                                    >
-                                        +
-                                    </AddButton>
-                                </AddButtonContainer>
-                            )
-                        }
 
                         <UploadContainer>
                             <Upload
-                                defaultMessage='Insira a foto de perfil da sua banda aqui...'
+                                defaultMessage='Insira a foto de perfil aqui...'
                                 dragActiveMessage='Solte a foto aqui...'
                                 dragRejectMessage='Arquivo não suportado'
+                                onDropAccepted={profilePicture => {
+                                    setProfilePicture(profilePicture);
+                                }}
+                                image={profilePicture}
                             />
                         </UploadContainer>
+
+                        <RadioContainer
+                            onKeyPress={evt => {
+                                const target = evt.target as HTMLInputElement;
+
+                                if (evt.key === 'Enter' || evt.key === ' ') {
+                                    const input = target.previousElementSibling as HTMLInputElement;
+
+                                    input.checked = true;
+
+                                    isBandRegister(input.id === 'band-radio');
+
+                                    evt.preventDefault();
+                                }
+                            }}
+                        >
+                            <Label htmlFor='band-radio'>Você quer cadastrar que tipo de conta?</Label>
+
+                            <RadioWrapper>
+                                <input
+                                    defaultChecked
+                                    type='radio'
+                                    name='radio'
+                                    id='band-radio'
+                                    onChange={() => isBandRegister(true)}
+                                />
+
+                                <Label
+                                    tabIndex={0}
+                                    htmlFor='band-radio'
+                                    onKeyDown={evt => {
+                                        if (evt.key === 'ArrowRight' || evt.key === 'ArrowDown') {
+                                            const target = evt.target as HTMLInputElement;
+                                            const firstDiv = target.parentElement as HTMLInputElement;
+                                            const secondDiv = firstDiv.nextElementSibling as HTMLInputElement;
+                                            const label = secondDiv.children[1] as HTMLInputElement;
+
+                                            label.focus();
+                                            evt.preventDefault();
+                                        }
+                                    }}
+                                >
+                                    Banda/Dupla/Solo
+                                </Label>
+                            </RadioWrapper>
+
+                            <RadioWrapper>
+                                <input
+                                    type='radio'
+                                    name='radio'
+                                    id='contractor-radio'
+                                    onChange={() => isBandRegister(false)}
+                                />
+
+                                <Label
+                                    tabIndex={0}
+                                    htmlFor='contractor-radio'
+                                    onKeyDown={evt => {
+                                        if (evt.key === 'ArrowLeft' || evt.key === 'ArrowUp') {
+                                            const target = evt.target as HTMLInputElement;
+                                            const firstDiv = target.parentElement as HTMLInputElement;
+                                            const secondDiv = firstDiv.previousElementSibling as HTMLInputElement;
+                                            const label = secondDiv.children[1] as HTMLInputElement;
+
+                                            label.focus();
+                                            evt.preventDefault();
+                                        }
+                                    }}
+                                >
+                                    Contratante
+                                </Label>
+                            </RadioWrapper>
+                        </RadioContainer>
                     </Fieldset>
+
+                    {bandRegister ? (
+                        <BandRegister
+                            onBandDataUpdate={(bandData: BandData) => {
+                                setBandData(bandData);
+                            }}
+                        />
+                    ) : (
+                        <ContractorRegister
+                        onContractorDataUpdate={(contractorData: ContractorData) => {
+                            setContractorData(contractorData);
+                        }}
+                        />
+                        )}
                 </Form>
             </Main>
         </Container>
