@@ -1,5 +1,6 @@
 import React, {
-    useState
+    useState,
+    useEffect
 } from 'react';
 
 import Fieldset from '../Fieldset';
@@ -19,10 +20,18 @@ const ContractorRegister: React.FC<ContractorRegisterProps> = ({ onContractorDat
         companyName: ''
     });
 
+    useEffect(() => {
+        onContractorDataUpdate(contractorData);
+    }, [
+        contractorData,
+        onContractorDataUpdate
+    ]);
+
     return (
         <Fieldset title='Dados do Contratante'>
             <InputBlock
                 label='Nome do Estabelecimento'
+                autoCapitalize='words'
                 value={contractorData.companyName}
                 onChange={evt => setContractorData({
                     ...contractorData,

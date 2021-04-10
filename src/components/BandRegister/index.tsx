@@ -22,7 +22,6 @@ export interface BandData {
     name: string;
     formation: string;
     members: string[];
-    musicalStyles: string[];
 }
 
 const BandRegister: React.FC<BandRegisterProps> = ({ onBandDataUpdate }) => {
@@ -30,8 +29,7 @@ const BandRegister: React.FC<BandRegisterProps> = ({ onBandDataUpdate }) => {
     const [bandData, setBandData] = useState<BandData>({
         name: '',
         formation: '',
-        members: [],
-        musicalStyles: []
+        members: []
     });
 
     const usePrevious = <T extends {}>(value: T) => {

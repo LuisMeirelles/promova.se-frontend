@@ -80,19 +80,18 @@ const SignUp: React.FC = () => {
         message: ''
     });
 
-    const [bandRegister, isBandRegister] = useState<boolean>(true);
+    const [bandRegister, isBandRegister] = useState(true);
 
-    const [validEmail, isValidEmail] = useState<boolean>(false);
-    const [validUsername, isValidUsername] = useState<boolean>(false);
-    const [validPassword, isValidPassword] = useState<boolean>(false);
+    const [validEmail, isValidEmail] = useState(false);
+    const [validUsername, isValidUsername] = useState(false);
+    const [validPassword, isValidPassword] = useState(false);
 
-    const [validData, isValidData] = useState<boolean>(false);
+    const [validData, isValidData] = useState(false);
 
     const [bandData, setBandData] = useState<BandData>({
         name: '',
         formation: '',
-        members: [],
-        musicalStyles: []
+        members: []
     });
 
     const [contractorData, setContractorData] = useState<ContractorData>({
@@ -113,19 +112,48 @@ const SignUp: React.FC = () => {
         validPassword
     ]);
 
+    useEffect(() => {
+        if (bandRegister) {
+            setContractorData({
+                companyName: ''
+            });
+        } else {
+            setBandData({
+                formation: '',
+                members: [],
+                name: ''
+            });
+        }
+    },[bandRegister]);
+
     const handleSignUp = async (evt: FormEvent) => {
         evt.preventDefault();
 
-        if (validData) {
+        const {
+            email,
+            username,
+            password
+        } = signUpData;
+
+        if (email.trim() === '' || username.trim() === '' || password.trim() === '') {
+            setResponseMessage({
+                type: 'warning',
+                message: 'Todos os campos devem ser preenchidos.'
+            });
+        } else if (validData) {
             const data = new FormData();
 
-            data.append('email', signUpData.email);
-            data.append('username', signUpData.username);
-            data.append('password', signUpData.password);
+            data.append('email', email);
+            data.append('username', username);
+            data.append('password', password);
             data.append('profile_picture', profilePicture.file);
 
+            data.append('band_name', bandData.name);
+            data.append('band_formation', bandData.formation);
+            data.append('members', JSON.stringify(bandData.members));
+
             try {
-                const user = await api.post('/users', data, {
+                await api.post('/users', data, {
                     onUploadProgress: (evt: ProgressEvent) => {
                         const progress = Math.round((evt.loaded * 100) / evt.total);
 
@@ -142,10 +170,8 @@ const SignUp: React.FC = () => {
                     case 'unexpected error while creating new user':
                         setResponseMessage({
                             type: 'error',
-                            message: `Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte provendo as seguintes informações: ${error.response.data.message}`
+                            message: 'Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte.'
                         });
-
-                        console.log(error.response);
 
                         break;
 
@@ -176,7 +202,7 @@ const SignUp: React.FC = () => {
                 type: 'warning',
                 message: 'O nome de usuário é inválido'
             });
-        } else if (!validPassword) {
+        } else if (!validPassword && password.trim() !== '') {
             setResponseMessage({
                 type: 'warning',
                 message: 'A senha é inválida'
@@ -515,11 +541,11 @@ const SignUp: React.FC = () => {
                         />
                     ) : (
                         <ContractorRegister
-                        onContractorDataUpdate={(contractorData: ContractorData) => {
-                            setContractorData(contractorData);
-                        }}
+                            onContractorDataUpdate={(contractorData: ContractorData) => {
+                                setContractorData(contractorData);
+                            }}
                         />
-                        )}
+                    )}
                 </Form>
             </Main>
         </Container>
