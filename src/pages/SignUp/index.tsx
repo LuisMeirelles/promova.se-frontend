@@ -53,8 +53,6 @@ interface SignUpData {
         instagram?: string;
         youtube?: string;
     };
-    bandData?: BandData;
-    contractorData?: ContractorData;
 }
 
 const SignUp: React.FC = () => {
@@ -141,19 +139,23 @@ const SignUp: React.FC = () => {
                 message: 'Todos os campos devem ser preenchidos.'
             });
         } else if (validData) {
-            const data = new FormData();
-
-            data.append('email', email);
-            data.append('username', username);
-            data.append('password', password);
-            data.append('profile_picture', profilePicture.file);
-
-            data.append('band_name', bandData.name);
-            data.append('band_formation', bandData.formation);
-            data.append('members', JSON.stringify(bandData.members));
 
             try {
-                await api.post('/users', data, {
+                const userData = {
+                    signUpData: new FormData(),
+                    contractorData: {}
+                }
+
+                userData.signUpData.append('email', email);
+                userData.signUpData.append('username', username);
+                userData.signUpData.append('password', password);
+                userData.signUpData.append('profile_picture', profilePicture.file);
+
+                const {
+                    data: {
+                        id: user_id
+                    }
+                } = await api.post('/users', userData.signUpData, {
                     onUploadProgress: (evt: ProgressEvent) => {
                         const progress = Math.round((evt.loaded * 100) / evt.total);
 
@@ -163,6 +165,25 @@ const SignUp: React.FC = () => {
                         });
                     }
                 });
+
+                const {
+                    name,
+                    formation
+                } = bandData;
+
+                if (bandRegister) {
+                    await api.post('/bands', {
+                        name,
+                        formation,
+                        members: JSON.stringify(bandData.members),
+                        user_id
+                    });
+                } else {
+                    await api.post('/contractors', {
+                        name: contractorData.companyName,
+                        user_id
+                    });
+                }
 
                 history.push('/');
             } catch (error) {
