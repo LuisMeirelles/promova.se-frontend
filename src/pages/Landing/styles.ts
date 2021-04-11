@@ -23,7 +23,7 @@ export const PageLandingContent = styled(Container)`
         grid-template-columns: 2fr 1fr 1fr;
         grid-template-areas:
             "logo hero hero"
-            "buttons buttons total";
+            "buttons buttons buttons";
     }
 `;
 
@@ -71,10 +71,13 @@ export const HeroImage = styled.img`
 
 export const ButtonsContainer = styled.div`
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-self: center;
     margin: 1.92rem 0;
 
     @media (min-width: 1100px) {
+        flex-direction: row;
         grid-area: buttons;
         justify-content: flex-start;
     }
@@ -90,9 +93,9 @@ const focusColors = {
     secondary: 'var(--color-secondary-dark)'
 }
 
-export const Button = styled(Link) <ButtonProps>`
-    width: 18rem;
-    height: 3.24rem;
+export const Button = styled(Link)<ButtonProps>`
+    width: 100%;
+    padding: 0.5rem;
     border-radius:0.48rem;
     display: flex;
     align-items: center;
@@ -103,22 +106,25 @@ export const Button = styled(Link) <ButtonProps>`
 
     background-color: ${({ color }) => color ? colors[color] : 'white'};
 
-    & {
-        text-decoration: none !important;
-    }
-
     &:first-of-type {
-        margin-right: 0.96rem;
+        margin-bottom: 0.96rem;
     }
 
     &:hover,
     &:focus {
-        background-color: ${({ color }) => color ? focusColors[color]: '#ccc'};
+        text-decoration: none;
         color: var(--color-button-text);
+        background-color: ${({ color }) => color ? focusColors[color]: '#ccc'};
     }
 
     @media (min-width: 1100px) {
+        width: fit-content;
+        padding: 1.15rem 3.65rem;
         font-size: 1.44rem;
-        height: 4.44rem;
+
+        &:first-of-type {
+            margin-right: 0.96rem;
+            margin-bottom: 0;
+        }
     }
 `;
