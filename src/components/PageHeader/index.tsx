@@ -5,11 +5,12 @@ import {
     Container,
     TopBarContainer,
     ReturnButton,
-    Logo,
     HeaderContent,
     HeaderTitle,
     HeaderDescription
 } from './styles';
+
+import Logo from '../Logo';
 
 import returnIcon from '../../assets/img/return-icon.svg';
 
@@ -28,7 +29,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, description, children })
                     </Link>
                 </ReturnButton>
 
-                <Logo>Promova.se</Logo>
+                <Logo size='10%' />
             </TopBarContainer>
 
             <HeaderContent>

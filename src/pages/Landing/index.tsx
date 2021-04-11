@@ -1,17 +1,17 @@
 import React from 'react';
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 
 import {
     PageLanding,
     PageLandingContent,
     LogoContainer,
-    Logo,
     Description,
     HeroImage,
     ButtonsContainer,
     Button
 } from './styles';
 
-import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import Logo from '../../components/Logo';
 
 import heroImage from '../../assets/img/hero-image.svg';
 
@@ -20,7 +20,7 @@ const Landing: React.FC = () => {
         <PageLanding>
             <PageLandingContent>
                 <LogoContainer>
-                    <Logo>Promova.se</Logo>
+                    <Logo />
                     <Description>Plataforma para promover sua banda ou encontrar bandas para tocar no seu estabelecimento.</Description>
                 </LogoContainer>
 
