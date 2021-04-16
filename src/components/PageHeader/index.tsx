@@ -12,7 +12,7 @@ import {
 
 import Logo from '../Logo';
 
-import returnIcon from '../../assets/img/return-icon.svg';
+import returnIcon from '../../assets/svg/return-icon.svg';
 
 interface PageHeaderProps {
     title: string;

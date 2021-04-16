@@ -8,9 +8,9 @@ import {
     SubmitButton
 } from './styles';
 
-import errorIcon from '../../assets/img/error-icon.svg';
-import warningIcon from '../../assets/img/warning-icon.svg';
-import successIcon from '../../assets/img/success-icon.svg';
+import errorIcon from '../../assets/svg/error-icon.svg';
+import warningIcon from '../../assets/svg/warning-icon.svg';
+import successIcon from '../../assets/svg/success-icon.svg';
 
 interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
     buttonText: string;

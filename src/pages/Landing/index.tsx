@@ -16,7 +16,7 @@ import {
 
 import Logo from '../../components/Logo';
 
-import heroImage from '../../assets/img/hero-image.svg';
+import heroImage from '../../assets/svg/hero-image.svg';
 
 const Landing: React.FC = () => {
     return (
