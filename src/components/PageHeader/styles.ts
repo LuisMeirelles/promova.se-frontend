@@ -4,7 +4,7 @@ import { Container as BSContainer } from "reactstrap";
 export const Wrapper = styled.header`
     display: flex;
     flex-direction: column;
-    padding-bottom: 3.84rem;
+    padding-bottom: 1.92rem;
     background-color: var(--color-primary);
 `;
 

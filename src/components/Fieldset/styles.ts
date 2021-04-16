@@ -17,7 +17,7 @@ export const FieldsetTitle = styled.legend`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 0.96rem;
+    margin-bottom: 0.96rem;
     border-bottom: 1px solid var(--color-line-in-white);
     font-weight: bold;
     font-size: 1.44rem;

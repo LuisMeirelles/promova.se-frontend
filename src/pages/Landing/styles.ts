@@ -32,7 +32,6 @@ export const LogoContainer = styled.div`
     display: flex;
     flex-direction: column;
     text-align: center;
-    margin-bottom: 3.2rem;
 
     @media (min-width: 1100px) {
         grid-area: logo;
@@ -42,17 +41,10 @@ export const LogoContainer = styled.div`
     }
 `;
 
-export const Logo = styled.h1`
-    font-family: 'Caveat', cursive;
-    font-size: 10rem;
-    font-weight: bold;
-    color: var(--color-title-in-primary);
-`;
-
 export const Description = styled.h2`
     font-size: 1.44rem;
     line-height: 2.16rem;
-    margin-top: 0.48rem;
+    margin-bottom: 0;
 
     @media (min-width: 1100px) {
         text-align: left;
@@ -63,6 +55,7 @@ export const Description = styled.h2`
 
 export const HeroImageWrapper = styled.div`
     display: flex;
+    margin: 2.56rem 0;
 
     @media (min-width: 1100px) {
         grid-area: hero;
@@ -75,7 +68,6 @@ export const ButtonsContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-self: center;
-    margin: 1.92rem 0;
 
     @media (min-width: 1100px) {
         flex-direction: row;

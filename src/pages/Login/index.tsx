@@ -1,10 +1,9 @@
 import React, {
     useState,
     FormEvent,
-    ChangeEvent
+    ChangeEvent,
 } from 'react';
-
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {
     Container,
@@ -29,7 +28,7 @@ const Login: React.FC = () => {
         message: ''
     });
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const history = useHistory();
 
     async function handleLogin(evt: FormEvent<HTMLFormElement>) {
         evt.preventDefault();
@@ -40,7 +39,7 @@ const Login: React.FC = () => {
                 loginData
             );
 
-            setIsAuthenticated(true);
+            history.push('/');
         } catch (error) {
             switch (error.response?.data.message) {
                 case 'user not found':
@@ -112,8 +111,6 @@ const Login: React.FC = () => {
                     </Fieldset>
                 </Form>
             </Main>
-
-            {isAuthenticated && <Redirect to='/' />}
         </Container>
     );
 };
