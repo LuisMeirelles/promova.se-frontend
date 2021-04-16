@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import {
+    Wrapper,
     Container,
     TopBarContainer,
     ReturnButton,
@@ -10,7 +11,7 @@ import {
     HeaderDescription
 } from './styles';
 
-import Logo from '../Logo';
+import Logo from '../../assets/components/Logo';
 
 import returnIcon from '../../assets/svg/return-icon.svg';
 
@@ -21,24 +22,26 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, description, children }) => {
     return (
-        <Container>
-            <TopBarContainer>
-                <ReturnButton>
-                    <Link to='/'>
-                        <img src={returnIcon} alt="Voltar" />
-                    </Link>
-                </ReturnButton>
+        <Wrapper>
+            <Container>
+                <TopBarContainer>
+                    <ReturnButton>
+                        <Link to='/'>
+                            <img src={returnIcon} alt="Voltar" />
+                        </Link>
+                    </ReturnButton>
 
-                <Logo size='10%' />
-            </TopBarContainer>
+                    <Logo size='20%' />
+                </TopBarContainer>
 
-            <HeaderContent>
-                <HeaderTitle>{title}</HeaderTitle>
-                {description && <HeaderDescription>{description}</HeaderDescription>}
+                <HeaderContent>
+                    <HeaderTitle>{title}</HeaderTitle>
+                    {description && <HeaderDescription>{description}</HeaderDescription>}
 
-                {children}
-            </HeaderContent>
-        </Container>
+                    {children}
+                </HeaderContent>
+            </Container>
+        </Wrapper>
     );
 }
 

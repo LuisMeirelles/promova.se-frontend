@@ -9,6 +9,7 @@ interface ButtonProps {
 export const PageLanding = styled.div`
     width: 100vw;
     min-height: 100vh;
+    padding: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -28,6 +29,8 @@ export const PageLandingContent = styled(Container)`
 `;
 
 export const LogoContainer = styled.div`
+    display: flex;
+    flex-direction: column;
     text-align: center;
     margin-bottom: 3.2rem;
 
@@ -58,12 +61,10 @@ export const Description = styled.h2`
     }
 `;
 
-export const HeroImage = styled.img`
-    width: 100%;
+export const HeroImageWrapper = styled.div`
+    display: flex;
 
     @media (min-width: 1100px) {
-        width: initial;
-        height: 100%;
         grid-area: hero;
         justify-self: center;
     }

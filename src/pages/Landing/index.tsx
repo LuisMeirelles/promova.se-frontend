@@ -9,14 +9,13 @@ import {
     PageLandingContent,
     LogoContainer,
     Description,
-    HeroImage,
+    HeroImageWrapper,
     ButtonsContainer,
     Button
 } from './styles';
 
-import Logo from '../../components/Logo';
-
-import heroImage from '../../assets/svg/hero-image.svg';
+import Logo from '../../assets/components/Logo';
+import HeroImage from '../../assets/components/HeroImage';
 
 const Landing: React.FC = () => {
     return (
@@ -27,7 +26,9 @@ const Landing: React.FC = () => {
                     <Description>Plataforma para promover sua banda ou encontrar bandas para tocar no seu estabelecimento.</Description>
                 </LogoContainer>
 
-                <HeroImage src={heroImage} />
+                <HeroImageWrapper>
+                    <HeroImage />
+                </HeroImageWrapper>
 
                 <ButtonsContainer>
                     <Button to='/login' color='primary'>

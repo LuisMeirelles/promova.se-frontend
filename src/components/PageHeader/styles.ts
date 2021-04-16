@@ -1,17 +1,23 @@
 import styled from 'styled-components';
 import { Container as BSContainer } from "reactstrap";
 
-export const Container = styled.header`
+export const Wrapper = styled.header`
     display: flex;
     flex-direction: column;
+    padding-bottom: 3.84rem;
     background-color: var(--color-primary);
 `;
 
-export const TopBarContainer = styled(BSContainer)`
+export const Container = styled(BSContainer)`
+    padding-top: 15px;
+    padding-bottom: 15px;
+`;
+
+export const TopBarContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.96rem 0;
+    margin-bottom: 1rem;
     color: var(--color-text-in-primary);
 `;
 
@@ -33,9 +39,8 @@ export const Logo = styled.p`
     color: var(--color-title-in-primary);
 `;
 
-export const HeaderContent = styled(BSContainer)`
+export const HeaderContent = styled.div`
     position: relative;
-    margin-bottom: 3.84rem;
 
     @media (min-width: 1100px) {
         flex: 1 1;
