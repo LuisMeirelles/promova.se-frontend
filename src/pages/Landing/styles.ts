@@ -58,6 +58,7 @@ export const HeroImageWrapper = styled.div`
     margin: 2.56rem 0;
 
     @media (min-width: 1100px) {
+        margin: 0;
         grid-area: hero;
         justify-self: center;
     }
