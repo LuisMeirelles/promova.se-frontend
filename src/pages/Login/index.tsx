@@ -41,7 +41,7 @@ const Login: React.FC = () => {
 
             history.push('/');
         } catch (error) {
-            switch (error.response?.data.message) {
+            switch (error.response.data.message) {
                 case 'user not found':
                     setResponseMessage({
                         type: 'warning',
@@ -61,10 +61,20 @@ const Login: React.FC = () => {
                 case 'unexpected error while authenticating the user':
                     setResponseMessage({
                         type: 'error',
-                        message: `Erro inesperado ao autenticar o usuário.\nPor favor, contate o suporte provendo as seguintes informações: ${error.response.data.message.error}`
+                        message: `Erro inesperado ao autenticar o usuário.\nPor favor, contate o suporte.`
                     });
 
+                    console.error(error.response.data);
+
                     break;
+
+                default:
+                    setResponseMessage({
+                        type: 'error',
+                        message: `Erro fatal.\nContate o suporte`
+                    });
+
+                    console.error(error.response.data);
             }
         }
     }

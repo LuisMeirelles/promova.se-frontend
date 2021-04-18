@@ -187,15 +187,7 @@ const SignUp: React.FC = () => {
 
                 history.push('/');
             } catch (error) {
-                switch (error.response?.data.message) {
-                    case 'unexpected error while creating new user':
-                        setResponseMessage({
-                            type: 'error',
-                            message: 'Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte.'
-                        });
-
-                        break;
-
+                switch (error.response.data.message) {
                     case 'email already registered':
                         setResponseMessage({
                             type: 'warning',
@@ -209,6 +201,26 @@ const SignUp: React.FC = () => {
                             type: 'warning',
                             message: 'O nome de usuário informado já está em uso'
                         });
+
+                        break;
+
+                    case 'unexpected error while creating new user':
+                        setResponseMessage({
+                            type: 'error',
+                            message: 'Erro inesperado ao criar novo usuário.\nPor favor, contate o suporte.'
+                        });
+
+                        console.error(error.response.data);
+
+                        break;
+
+                    default:
+                        setResponseMessage({
+                            type: 'error',
+                            message: 'Erro fatal.\nPor favor, contate o suporte.'
+                        });
+
+                        console.error(error.response.data);
 
                         break;
                 }

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     BrowserRouter,
-    Route
+    Route,
+    RouteComponentProps,
+    RouteProps
 } from 'react-router-dom';
 
 import Landing from './pages/Landing';
@@ -9,7 +11,25 @@ import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
 
-import ProtectedRoute from './protectedRoute';
+import { Context } from './components/AuthProvider';
+
+interface ProtectedRouteProps extends RouteProps {
+    default: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({component: Component, default: Default, ...props}) => {
+    const { authenticated } = useContext(Context);
+
+    return (
+        <Route {...props} render={props => {
+            if (authenticated) {
+                return Component && <Component {...props} />
+            }
+
+            return <Default {...props} />
+        }} />
+    );
+};
 
 const Routes: React.FC = () => {
     return (
