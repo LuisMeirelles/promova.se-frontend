@@ -20,7 +20,7 @@ const SelectBlock: React.FC<SelectBlockProps> = ({ label, id, options, ...props 
     id = !id ? Date.now().toString() : id;
 
     return (
-        <Container id="select-block">
+        <Container className="select-block">
             <Label htmlFor={id}>{label}</Label>
 
             <Select

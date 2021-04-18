@@ -31,12 +31,12 @@ const Landing: React.FC = () => {
                 </HeroImageWrapper>
 
                 <ButtonsContainer>
-                    <Button to='/login' color='primary'>
+                    <Button to='/entrar' color='primary'>
                         <FaSignInAlt style={{ marginRight: '1rem' }} size={32} color='white' />
                         Fazer Login
                     </Button>
 
-                    <Button to='/signup' color='secondary'>
+                    <Button to='/registrar' color='secondary'>
                         <FaUserPlus style={{ marginRight: '1rem' }} size={32} color='white' />
                         Cadastrar
                     </Button>

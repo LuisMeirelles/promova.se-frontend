@@ -17,32 +17,28 @@ interface ProtectedRouteProps extends RouteProps {
     default: React.ComponentType<RouteComponentProps<any>> | React.ComponentType<any>;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({component: Component, default: Default, ...props}) => {
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({component: Component, default: Default, ...rest}) => {
     const { authenticated } = useContext(Context);
 
     return (
-        <Route {...props} render={props => {
-            if (authenticated) {
-                return Component && <Component {...props} />
-            }
-
-            return <Default {...props} />
-        }} />
+        <Route {...rest} render={props => (
+            authenticated
+            ? (Component && <Component {...props} />)
+            : <Default {...props} />
+        )} />
     );
 };
 
-const Routes: React.FC = () => {
-    return (
-        <BrowserRouter>
-            <ProtectedRoute
-                exact path='/'
-                component={Dashboard}
-                default={Landing}
-            />
-            <Route path='/login' component={Login} />
-            <Route path='/signup' component={SignUp} />
-        </BrowserRouter>
-    );
-}
+const Routes: React.FC = () => (
+    <BrowserRouter>
+        <ProtectedRoute
+            exact path='/'
+            component={Dashboard}
+            default={Landing}
+        />
+        <Route path='/entrar' component={Login} />
+        <Route path='/registrar' component={SignUp} />
+    </BrowserRouter>
+);
 
 export default Routes;

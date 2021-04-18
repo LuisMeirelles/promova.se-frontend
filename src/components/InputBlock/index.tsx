@@ -26,7 +26,7 @@ const InputBlock: React.FC<InputBlockProps> = ({ label, id, valid, messagesOnVal
     id = !id ? Date.now().toString() : id;
 
     return (
-        <Container closable={closable} id="input-block">
+        <Container closable={closable} className="input-block">
             <Label htmlFor={id}>{label}</Label>
 
             {closable ? (

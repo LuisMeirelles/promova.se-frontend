@@ -11,7 +11,7 @@ export const Container = styled.div<ContainerProps>`
     position: relative;
 
     & + &,
-    #select-block + & {
+    .select-block + & {
         margin-top: 1rem;
     }
 

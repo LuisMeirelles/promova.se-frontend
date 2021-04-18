@@ -125,7 +125,7 @@ const BandRegister: React.FC<BandRegisterProps> = ({ onBandDataUpdate }) => {
 
             {bandData.members.map((_, idx) => (bandData.formation !== '') && (
                 <InputBlock
-                    key={idx}
+                    key={`input-${idx}`}
                     label='Nome do Integrante'
                     value={bandData.members[idx]}
                     onChange={evt => setBandData({

@@ -1,9 +1,12 @@
 import React, {
     useEffect,
-    useState
+    useState,
+    useContext
 } from 'react';
 
 import api from '../../services/api';
+
+import { Context } from '../../components/AuthProvider';
 
 interface UsersInterface {
     id: number;
@@ -15,16 +18,18 @@ interface UsersInterface {
 }
 
 const Dashboard: React.FC = () => {
+    const { user } = useContext(Context);
+
     const [userData, setUserData] = useState<UsersInterface>();
 
     useEffect(() => {
         (async function () {
-            const id = localStorage.getItem('user_id');
+            const id = user.id;
             const { data } = await api.get(`/users/${id}`);
 
             setUserData(data);
         })()
-    }, []);
+    }, [user]);
 
     return (
         <>

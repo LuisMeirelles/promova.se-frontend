@@ -19,6 +19,10 @@ import InputBlock from '../../components/InputBlock';
 import { Context } from '../../components/AuthProvider';
 
 const Login: React.FC = () => {
+    const { authenticated, authenticationHandler } = useContext(Context);
+
+    const history = useHistory();
+
     const [loginData, setLoginData] = useState({
         user: '',
         password: ''
@@ -28,10 +32,6 @@ const Login: React.FC = () => {
         type: '',
         message: ''
     });
-
-    const { authenticationHandler } = useContext(Context);
-
-    const history = useHistory();
 
     const handleLogin = async (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
@@ -91,38 +91,44 @@ const Login: React.FC = () => {
         });
     }
 
-    return (
-        <Container>
-            <PageHeader
-                title='Preencha os campos abaixo para fazer login.'
-            />
+    if (authenticated) {
+        history.push('/');
 
-            <Main>
-                <Form
-                    buttonText='Fazer Login'
-                    footerMessage={responseMessage}
-                    onSubmit={handleLogin}
-                >
-                    <Fieldset title='Login'>
-                        <InputBlock
-                            label='E-mail ou Nome de Usuário'
-                            id='user'
-                            value={loginData.user}
-                            onChange={evt => setData(evt)}
-                        />
+        return <></>
+    } else {
+        return (
+            <Container>
+                <PageHeader
+                    title='Preencha os campos abaixo para fazer login.'
+                />
 
-                        <InputBlock
-                            label='Senha'
-                            id='password'
-                            type='password'
-                            value={loginData.password}
-                            onChange={evt => setData(evt)}
-                        />
-                    </Fieldset>
-                </Form>
-            </Main>
-        </Container>
-    );
+                <Main>
+                    <Form
+                        buttonText='Fazer Login'
+                        footerMessage={responseMessage}
+                        onSubmit={handleLogin}
+                    >
+                        <Fieldset title='Login'>
+                            <InputBlock
+                                label='E-mail ou Nome de Usuário'
+                                id='user'
+                                value={loginData.user}
+                                onChange={evt => setData(evt)}
+                            />
+
+                            <InputBlock
+                                label='Senha'
+                                id='password'
+                                type='password'
+                                value={loginData.password}
+                                onChange={evt => setData(evt)}
+                            />
+                        </Fieldset>
+                    </Form>
+                </Main>
+            </Container>
+        );
+    };
 };
 
 export default Login;

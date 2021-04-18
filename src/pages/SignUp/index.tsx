@@ -1,7 +1,8 @@
 import React, {
     useState,
     FormEvent,
-    useEffect
+    useEffect,
+    useContext
 } from 'react';
 
 import { useHistory } from 'react-router-dom';
@@ -32,6 +33,7 @@ import ContractorRegister, {
 } from '../../components/ContractorRegister';
 
 import api from '../../services/api';
+import { Context } from '../../components/AuthProvider';
 
 interface ResponseMessage {
     type: 'success' | 'warning' | 'error' | '';
@@ -56,6 +58,10 @@ interface SignUpData {
 }
 
 const SignUp: React.FC = () => {
+    const history = useHistory();
+
+    const { authenticated } = useContext(Context);
+
     const [signUpData, setSignUpData] = useState<SignUpData>({
         email: '',
         username: '',
@@ -95,8 +101,6 @@ const SignUp: React.FC = () => {
     const [contractorData, setContractorData] = useState<ContractorData>({
         companyName: ''
     });
-
-    const history = useHistory();
 
     useEffect(() => {
         if (validEmail && validUsername && validPassword) {
@@ -151,11 +155,9 @@ const SignUp: React.FC = () => {
                 userData.signUpData.append('password', password);
                 userData.signUpData.append('profile_picture', profilePicture.file);
 
-                const {
-                    data: {
-                        id: user_id
-                    }
-                } = await api.post('/users', userData.signUpData, {
+                const {data: {
+                    id: user_id
+                }} = await api.post('/users', userData.signUpData, {
                     onUploadProgress: (evt: ProgressEvent) => {
                         const progress = Math.round((evt.loaded * 100) / evt.total);
 
@@ -421,168 +423,176 @@ const SignUp: React.FC = () => {
         return messages;
     };
 
-    return (
-        <Container>
-            <PageHeader
-                title='Cadastre sua banda ou estabelecimento aqui.'
-                description='Para realizar o cadastro da sua banda ou estabelecimento na nossa plataforma basta preencher os dados do formulário abaixo.'
-            />
+    if (authenticated) {
+        return (
+            <>
+                {history.push('/')}
+            </>
+        );
+    } else {
+        return (
+            <Container>
+                <PageHeader
+                    title='Cadastre sua banda ou estabelecimento aqui.'
+                    description='Para realizar o cadastro da sua banda ou estabelecimento na nossa plataforma basta preencher os dados do formulário abaixo.'
+                />
 
-            <Main>
-                <Form
-                    buttonText='Cadastrar-se'
-                    onSubmit={handleSignUp}
-                    footerMessage={responseMessage}
-                >
-                    <Fieldset title='Dados da Conta'>
-                        <InputBlock
-                            autoFocus
-                            label='E-mail'
-                            type='email'
-                            value={signUpData.email}
-                            onChange={evt => setSignUpData({
-                                ...signUpData,
-                                email: evt.target.value
-                            })}
-                            valid={emailIsValid()}
-                            messagesOnInvalid={generateInvalidEmailText()}
-                        />
-
-                        <InputBlock
-                            label='Nome de Usuário'
-                            value={signUpData.username}
-                            onChange={evt => setSignUpData({
-                                ...signUpData,
-                                username: evt.target.value
-                            })}
-                            valid={usernameIsValid()}
-                            messagesOnInvalid={generateInvalidUsernameText()}
-                        />
-
-                        <InputBlock
-                            label='Senha'
-                            type='password'
-                            value={signUpData.password}
-                            onChange={evt => setSignUpData({
-                                ...signUpData,
-                                password: evt.target.value
-                            })}
-                            valid={passwordIsValid()}
-                            messagesOnInvalid={generateInvalidPasswordText()}
-                        />
-
-                        <InputBlock
-                            label='Confirmar Senha'
-                            type='password'
-                            value={passwordConfirmed}
-                            onChange={evt => setPasswordConfirmed(evt.target.value)}
-                            valid={confirmedPasswordIsValid()}
-                            messagesOnInvalid={generateInvalidConfirmedPasswordText()}
-                        />
-
-                        <UploadContainer>
-                            <Upload
-                                defaultMessage='Insira a foto de perfil aqui...'
-                                dragActiveMessage='Solte a foto aqui...'
-                                dragRejectMessage='Arquivo não suportado'
-                                onDropAccepted={profilePicture => {
-                                    setProfilePicture(profilePicture);
-                                }}
-                                image={profilePicture}
+                <Main>
+                    <Form
+                        buttonText='Cadastrar-se'
+                        onSubmit={handleSignUp}
+                        footerMessage={responseMessage}
+                    >
+                        <Fieldset title='Dados da Conta'>
+                            <InputBlock
+                                autoFocus
+                                label='E-mail'
+                                type='email'
+                                value={signUpData.email}
+                                onChange={evt => setSignUpData({
+                                    ...signUpData,
+                                    email: evt.target.value
+                                })}
+                                valid={emailIsValid()}
+                                messagesOnInvalid={generateInvalidEmailText()}
                             />
-                        </UploadContainer>
 
-                        <RadioContainer
-                            onKeyPress={evt => {
-                                const target = evt.target as HTMLInputElement;
+                            <InputBlock
+                                label='Nome de Usuário'
+                                value={signUpData.username}
+                                onChange={evt => setSignUpData({
+                                    ...signUpData,
+                                    username: evt.target.value
+                                })}
+                                valid={usernameIsValid()}
+                                messagesOnInvalid={generateInvalidUsernameText()}
+                            />
 
-                                if (evt.key === 'Enter' || evt.key === ' ') {
-                                    const input = target.previousElementSibling as HTMLInputElement;
+                            <InputBlock
+                                label='Senha'
+                                type='password'
+                                value={signUpData.password}
+                                onChange={evt => setSignUpData({
+                                    ...signUpData,
+                                    password: evt.target.value
+                                })}
+                                valid={passwordIsValid()}
+                                messagesOnInvalid={generateInvalidPasswordText()}
+                            />
 
-                                    input.checked = true;
+                            <InputBlock
+                                label='Confirmar Senha'
+                                type='password'
+                                value={passwordConfirmed}
+                                onChange={evt => setPasswordConfirmed(evt.target.value)}
+                                valid={confirmedPasswordIsValid()}
+                                messagesOnInvalid={generateInvalidConfirmedPasswordText()}
+                            />
 
-                                    isBandRegister(input.id === 'band-radio');
-
-                                    evt.preventDefault();
-                                }
-                            }}
-                        >
-                            <Label htmlFor='band-radio'>Você quer cadastrar que tipo de conta?</Label>
-
-                            <RadioWrapper>
-                                <input
-                                    defaultChecked
-                                    type='radio'
-                                    name='radio'
-                                    id='band-radio'
-                                    onChange={() => isBandRegister(true)}
-                                />
-
-                                <Label
-                                    tabIndex={0}
-                                    htmlFor='band-radio'
-                                    onKeyDown={evt => {
-                                        if (evt.key === 'ArrowRight' || evt.key === 'ArrowDown') {
-                                            const target = evt.target as HTMLInputElement;
-                                            const firstDiv = target.parentElement as HTMLInputElement;
-                                            const secondDiv = firstDiv.nextElementSibling as HTMLInputElement;
-                                            const label = secondDiv.children[1] as HTMLInputElement;
-
-                                            label.focus();
-                                            evt.preventDefault();
-                                        }
+                            <UploadContainer>
+                                <Upload
+                                    defaultMessage='Insira a foto de perfil aqui...'
+                                    dragActiveMessage='Solte a foto aqui...'
+                                    dragRejectMessage='Arquivo não suportado'
+                                    onDropAccepted={profilePicture => {
+                                        setProfilePicture(profilePicture);
                                     }}
-                                >
-                                    Banda/Dupla/Solo
-                                </Label>
-                            </RadioWrapper>
-
-                            <RadioWrapper>
-                                <input
-                                    type='radio'
-                                    name='radio'
-                                    id='contractor-radio'
-                                    onChange={() => isBandRegister(false)}
+                                    image={profilePicture}
                                 />
+                            </UploadContainer>
 
-                                <Label
-                                    tabIndex={0}
-                                    htmlFor='contractor-radio'
-                                    onKeyDown={evt => {
-                                        if (evt.key === 'ArrowLeft' || evt.key === 'ArrowUp') {
-                                            const target = evt.target as HTMLInputElement;
-                                            const firstDiv = target.parentElement as HTMLInputElement;
-                                            const secondDiv = firstDiv.previousElementSibling as HTMLInputElement;
-                                            const label = secondDiv.children[1] as HTMLInputElement;
+                            <RadioContainer
+                                onKeyPress={evt => {
+                                    const target = evt.target as HTMLInputElement;
 
-                                            label.focus();
-                                            evt.preventDefault();
-                                        }
-                                    }}
-                                >
-                                    Contratante
-                                </Label>
-                            </RadioWrapper>
-                        </RadioContainer>
-                    </Fieldset>
+                                    if (evt.key === 'Enter' || evt.key === ' ') {
+                                        const input = target.previousElementSibling as HTMLInputElement;
 
-                    {bandRegister ? (
-                        <BandRegister
-                            onBandDataUpdate={(bandData: BandData) => {
-                                setBandData(bandData);
-                            }}
-                        />
-                    ) : (
-                        <ContractorRegister
-                            onContractorDataUpdate={(contractorData: ContractorData) => {
-                                setContractorData(contractorData);
-                            }}
-                        />
-                    )}
-                </Form>
-            </Main>
-        </Container>
-    );
+                                        input.checked = true;
+
+                                        isBandRegister(input.id === 'band-radio');
+
+                                        evt.preventDefault();
+                                    }
+                                }}
+                            >
+                                <Label htmlFor='band-radio'>Você quer cadastrar que tipo de conta?</Label>
+
+                                <RadioWrapper>
+                                    <input
+                                        defaultChecked
+                                        type='radio'
+                                        name='radio'
+                                        id='band-radio'
+                                        onChange={() => isBandRegister(true)}
+                                    />
+
+                                    <Label
+                                        tabIndex={0}
+                                        htmlFor='band-radio'
+                                        onKeyDown={evt => {
+                                            if (evt.key === 'ArrowRight' || evt.key === 'ArrowDown') {
+                                                const target = evt.target as HTMLInputElement;
+                                                const firstDiv = target.parentElement as HTMLInputElement;
+                                                const secondDiv = firstDiv.nextElementSibling as HTMLInputElement;
+                                                const label = secondDiv.children[1] as HTMLInputElement;
+
+                                                label.focus();
+                                                evt.preventDefault();
+                                            }
+                                        }}
+                                    >
+                                        Banda/Dupla/Solo
+                                    </Label>
+                                </RadioWrapper>
+
+                                <RadioWrapper>
+                                    <input
+                                        type='radio'
+                                        name='radio'
+                                        id='contractor-radio'
+                                        onChange={() => isBandRegister(false)}
+                                    />
+
+                                    <Label
+                                        tabIndex={0}
+                                        htmlFor='contractor-radio'
+                                        onKeyDown={evt => {
+                                            if (evt.key === 'ArrowLeft' || evt.key === 'ArrowUp') {
+                                                const target = evt.target as HTMLInputElement;
+                                                const firstDiv = target.parentElement as HTMLInputElement;
+                                                const secondDiv = firstDiv.previousElementSibling as HTMLInputElement;
+                                                const label = secondDiv.children[1] as HTMLInputElement;
+
+                                                label.focus();
+                                                evt.preventDefault();
+                                            }
+                                        }}
+                                    >
+                                        Contratante
+                                    </Label>
+                                </RadioWrapper>
+                            </RadioContainer>
+                        </Fieldset>
+
+                        {bandRegister ? (
+                            <BandRegister
+                                onBandDataUpdate={(bandData: BandData) => {
+                                    setBandData(bandData);
+                                }}
+                            />
+                        ) : (
+                            <ContractorRegister
+                                onContractorDataUpdate={(contractorData: ContractorData) => {
+                                    setContractorData(contractorData);
+                                }}
+                            />
+                        )}
+                    </Form>
+                </Main>
+            </Container>
+        );
+    };
 };
 
 export default SignUp;
