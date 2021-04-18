@@ -7,11 +7,18 @@ import {
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
+
+import ProtectedRoute from './protectedRoute';
 
 const Routes: React.FC = () => {
     return (
         <BrowserRouter>
-            <Route exact path='/' component={Landing} />
+            <ProtectedRoute
+                exact path='/'
+                component={Dashboard}
+                default={Landing}
+            />
             <Route path='/login' component={Login} />
             <Route path='/signup' component={SignUp} />
         </BrowserRouter>

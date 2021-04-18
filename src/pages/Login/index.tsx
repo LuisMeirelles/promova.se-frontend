@@ -2,6 +2,7 @@ import React, {
     useState,
     FormEvent,
     ChangeEvent,
+    useContext
 } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -15,7 +16,7 @@ import Form from '../../components/Form';
 import Fieldset from '../../components/Fieldset';
 import InputBlock from '../../components/InputBlock';
 
-import api from '../../services/api';
+import { Context } from '../../components/AuthProvider';
 
 const Login: React.FC = () => {
     const [loginData, setLoginData] = useState({
@@ -28,16 +29,15 @@ const Login: React.FC = () => {
         message: ''
     });
 
+    const { authenticationHandler } = useContext(Context);
+
     const history = useHistory();
 
-    async function handleLogin(evt: FormEvent<HTMLFormElement>) {
+    const handleLogin = async (evt: FormEvent<HTMLFormElement>) => {
         evt.preventDefault();
 
         try {
-            await api.post(
-                '/users/auth',
-                loginData
-            );
+            await authenticationHandler(loginData);
 
             history.push('/');
         } catch (error) {
